@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YourCart Never Shopping Buddy</title>
+    <link rel="stylesheet" href="./dist/style.css" />
+  </head>
+  <body>
+    <nav class="bg-blue-600 text-blue-200 p-5 w-full">
+      <div class="">
+        <div class="container flex justify-between">
+          <a href="#" class="text-2xl font-semibold">Shopping List </a>
+          <ul class="items-end">
+            <li class="">
+              <a
+                href="#"
+                class="
+                  clear-btn
+                  bg-blue-900
+                  rounded-md
+                  p-3
+                  shadow-md
+                  cursor-pointer
+                  transition
+                  duration-150
+                  ease-out
+                  hover:shadow-sm
+                "
+              >
+                Clear all
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div class="container">
+      <div class="p-10 m-5 bg-gray-100 rounded-md shadow">
+        <h1 class="text-2xl text-gray-800 mb-5 capitalize">
+          Add an item to you list
+        </h1>
+        <form class="grid grid-cols-2 grid-rows-2 gap-5">
+          <div class="flex flex-col">
+            <label class="text-sm text-gray-500" for="item-name">Item</label>
+            <input
+              class="
+                item-name
+                max-w-md
+                px-2
+                py-1
+                border
+                rounded-md
+                outline-none
+                focus:ring-1 focus:border-blue-100
+                transition
+                duration-150
+                ease-out
+              "
+              type="text"
+              placeholder="Add Item"
+            />
+          </div>
+          <div class="flex flex-col">
+            <label class="text-sm text-gray-500" for="item-calories"
+              >Price</label
+            >
+            <input
+              class="
+                item-price
+                max-w-md
+                px-2
+                py-1
+                border
+                rounded-md
+                outline-none
+                focus:ring-1 focus:border-blue-100
+                transition
+                duration-150
+                ease-out
+              "
+              type="number"
+              placeholder="Add Price"
+            />
+          </div>
+          <div class="flex items-center justify-between">
+            <button
+              class="
+                add-btn
+                flex
+                items-center
+                justify-center
+                btn
+                bg-blue-500
+                text-blue-50
+                hover:bg-blue-600
+                active:bg-blue-700
+              "
+            >
+              <svg
+                class="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                ></path>
+              </svg>
+              Add Item
+            </button>
+
+            <button
+              class="
+                update-btn
+                btn
+                flex
+                items-center
+                justify-center
+                bg-green-500
+                text-green-50
+                hover:bg-green-600
+                active:bg-green-700
+              "
+            >
+              Update Item
+            </button>
+            <button
+              class="
+                delete-btn
+                btn
+                flex
+                items-center
+                justify-center
+                bg-red-500
+                text-red-50
+                hover:bg-red-600
+                active:bg-red-700
+              "
+            >
+              Delete Item
+            </button>
+          </div>
+          <button
+            class="back-btn flex items-center justify-center text-blue-900"
+          >
+            <svg
+              class="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 19l-7-7 7-7"
+              ></path>
+            </svg>
+            Back
+          </button>
+        </form>
+      </div>
+      <h2 class="text-3xl text-gray-800 text-center">
+        Total Price: <span class="total-price">0</span>
+      </h2>
+
+      <ul class="mx-5 rounded-md space-y-1" id="item-list"></ul>
+    </div>
+    <script src="./js/app.js"></script>
+  </body>
+</html>
