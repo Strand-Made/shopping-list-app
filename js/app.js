@@ -138,9 +138,10 @@ const UiCtrl = (function () {
     deleteBtn: ".delete-btn",
     backBtn: ".back-btn",
     clearBtn: ".clear-btn",
+    notifyContainer: ".notifyContainer",
   };
   const UiStyles = {
-    liStyle: "flex justify-between border p-3",
+    liStyle: "flex justify-between border p-3 rounded-md",
   };
   return {
     populateItemList: function (items) {
@@ -175,6 +176,83 @@ const UiCtrl = (function () {
         `;
       });
       document.querySelector(UiSelectors.itemList).innerHTML = html;
+    },
+    notifyUser: (type, removeMessage) => {
+      const notifyContainer = document.querySelector(
+        UiSelectors.notifyContainer
+      );
+      let notifyStyles = {
+        textColor: "",
+        display: "flex",
+        position: "-translate-y-16",
+        message: "",
+      };
+      if (type === "success") {
+        notifyStyles.textColor = "text-yellow-600";
+        notifyStyles.message = "Item successfully added";
+        notifyContainer.classList.replace("opacity-0", "opacity-100");
+        notifyContainer.classList.add("translate-y-1");
+      }
+      if (type === "deleted") {
+        notifyStyles.textColor = "text-red-600";
+
+        notifyStyles.message = "Item successfully deleted";
+      }
+      if (type === "updated") {
+        notifyStyles.textColor = "text-yellow-600";
+        notifyStyles.message = "Item successfully updated";
+        notifyContainer.classList.toggle("opacity-100");
+      }
+      if ("removeMessage") {
+        notifyContainer.classList.replace("opacity-100", "opacity-0");
+        notifyContainer.classList.toggle("translate-y-1");
+      }
+
+      let style = `${notifyStyles.display} items-center absolute top-0 inset-x-0 max-w-md mt-4 rounded-md mx-auto justify-between bg-gray-200 px-3 
+      py-4 ${notifyStyles.opacity} `;
+
+      notifyContainer.innerHTML = `
+      <div
+      role="dialog"
+      aria-labelledby="dialogTitle"
+      class="${style}"
+    >
+      <svg
+        class="w-7 h-7 stroke-current ${notifyStyles.textColor}"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
+        ></path>
+      </svg>
+
+      <h3 class="${notifyStyles.textColor}" id="dialogTitle">
+        ${notifyStyles.message}
+      </h3>
+      <button class="cursor-pointer clear-modal  p-2 z-10" aria-label="close dialog">
+        <svg
+          class="w-6 h-6 stroke-current text-gray-700 pointer-events-none"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          ></path>
+        </svg>
+      </button>
+    </div>
+      `;
     },
     getItemInput: () => {
       return {
@@ -302,6 +380,10 @@ const App = (function (ItemCtrl, StorageCtrl, UiCtrl) {
       .addEventListener("click", itemAddSubmit);
 
     document
+      .querySelector(UiSelectors.notifyContainer)
+      .addEventListener("click", clearModalOnClick);
+
+    document
       .querySelector(UiSelectors.itemList)
       .addEventListener("click", itemEditClick);
 
@@ -325,7 +407,7 @@ const App = (function (ItemCtrl, StorageCtrl, UiCtrl) {
     if (input.name !== "" && input.price !== "") {
       const newItem = ItemCtrl.addItem(input.name, input.price);
       UiCtrl.addListItem(newItem);
-
+      UiCtrl.notifyUser("success");
       const totalPrice = ItemCtrl.getTotalPrice();
       UiCtrl.showTotalPrice(totalPrice);
 
@@ -351,12 +433,23 @@ const App = (function (ItemCtrl, StorageCtrl, UiCtrl) {
     e.preventDefault();
   };
 
+  const clearModalOnClick = (e) => {
+    if (e.target.classList.contains("clear-modal")) {
+      console.log("click");
+      UiCtrl.notifyUser("removeMessage");
+    }
+
+    e.preventDefault();
+  };
+
   const itemUpdateSubmit = (e) => {
     const input = UiCtrl.getItemInput();
 
     const updatedItem = ItemCtrl.updateItem(input.name, input.price);
 
     UiCtrl.updateListItem(updatedItem);
+    UiCtrl.notifyUser("updated");
+
     const totalPrice = ItemCtrl.getTotalPrice();
     UiCtrl.showTotalPrice(totalPrice);
     StorageCtrl.updateLocalStorage(updatedItem);
@@ -370,7 +463,7 @@ const App = (function (ItemCtrl, StorageCtrl, UiCtrl) {
     ItemCtrl.deleteItem(currentItem.id);
 
     UiCtrl.deleteListItem(currentItem.id);
-
+    UiCtrl.notifyUser("deleted");
     const totalPrice = ItemCtrl.getTotalPrice();
     UiCtrl.showTotalPrice(totalPrice);
     StorageCtrl.deleteItemFromStorage(currentItem.id);
