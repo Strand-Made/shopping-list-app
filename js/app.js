@@ -1,4 +1,19 @@
 // storage controller
+const StorageCtrl = (function () {
+  return {
+    storeItem: (item) => {
+      let items = [];
+      if (!localStorage.getItem("items")) {
+        items = [];
+        items.push(item);
+        return localStorage.setItem("items", JSON.stringify(items));
+      }
+      items = JSON.parse(localStorage.getItem("items"));
+      items.push(item);
+      return localStorage.setItem("items", JSON.stringify(items));
+    },
+  };
+})();
 
 // item controller
 const ItemCtrl = (function () {
@@ -255,7 +270,7 @@ const UiCtrl = (function () {
 })();
 
 // App controller
-const App = (function (ItemCtrl, UiCtrl) {
+const App = (function (ItemCtrl, StorageCtrl, UiCtrl) {
   const loadEventListeners = () => {
     const UiSelectors = UiCtrl.getSelectors();
 
@@ -291,6 +306,7 @@ const App = (function (ItemCtrl, UiCtrl) {
       const totalPrice = ItemCtrl.getTotalPrice();
       UiCtrl.showTotalPrice(totalPrice);
 
+      StorageCtrl.storeItem(newItem);
       UiCtrl.clearInputs();
     }
 
@@ -361,5 +377,5 @@ const App = (function (ItemCtrl, UiCtrl) {
       loadEventListeners();
     },
   };
-})(ItemCtrl, UiCtrl);
+})(ItemCtrl, StorageCtrl, UiCtrl);
 App.init();
