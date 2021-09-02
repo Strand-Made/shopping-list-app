@@ -12,6 +12,35 @@ const StorageCtrl = (function () {
       items.push(item);
       return localStorage.setItem("items", JSON.stringify(items));
     },
+    getItemsFromStorage: () => {
+      let items;
+      if (!localStorage.getItem("items")) {
+        return (items = []);
+      }
+      items = JSON.parse(localStorage.getItem("items"));
+      return items;
+    },
+    updateLocalStorage: (updatedItem) => {
+      let items = JSON.parse(localStorage.getItem("items"));
+      items.forEach((item, index) => {
+        if (updatedItem.id === item.id) {
+          items.splice(index, 1, updatedItem);
+        }
+      });
+      localStorage.setItem("items", JSON.stringify(items));
+    },
+    deleteItemFromStorage: (itemId) => {
+      let items = JSON.parse(localStorage.getItem("items"));
+      items.forEach((itemId, index) => {
+        if (itemId === item.id) {
+          items.splice(index, 1);
+        }
+      });
+      localStorage.setItem("items", JSON.stringify(items));
+    },
+    clearItemsFromStorage: () => {
+      localStorage.removeItem("items");
+    },
   };
 })();
 
@@ -26,7 +55,7 @@ const ItemCtrl = (function () {
 
   // data structure
   const data = {
-    items: [],
+    items: StorageCtrl.getItemsFromStorage(),
     currentItem: null,
     totalPrice: 0,
   };
@@ -336,6 +365,7 @@ const App = (function (ItemCtrl, StorageCtrl, UiCtrl) {
     UiCtrl.updateListItem(updatedItem);
     const totalPrice = ItemCtrl.getTotalPrice();
     UiCtrl.showTotalPrice(totalPrice);
+    StorageCtrl.updateLocalStorage(updatedItem);
     UiCtrl.clearEditState();
 
     e.preventDefault(e);
@@ -349,6 +379,7 @@ const App = (function (ItemCtrl, StorageCtrl, UiCtrl) {
 
     const totalPrice = ItemCtrl.getTotalPrice();
     UiCtrl.showTotalPrice(totalPrice);
+    StorageCtrl.deleteItemFromStorage(currentItem.id);
     UiCtrl.clearEditState();
     e.preventDefault();
   };
@@ -358,6 +389,7 @@ const App = (function (ItemCtrl, StorageCtrl, UiCtrl) {
     const totalPrice = ItemCtrl.getTotalPrice();
     UiCtrl.showTotalPrice(totalPrice);
     UiCtrl.removeItems();
+    StorageCtrl.clearItemsFromStorage();
     UiCtrl.hideList();
   };
 
