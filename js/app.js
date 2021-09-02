@@ -1,4 +1,3 @@
-// storage controller
 const StorageCtrl = (function () {
   return {
     storeItem: (item) => {
@@ -44,16 +43,13 @@ const StorageCtrl = (function () {
   };
 })();
 
-// item controller
 const ItemCtrl = (function () {
-  // item contructor
   const Item = function (id, name, price) {
     this.id = id;
     this.name = name;
     this.price = price;
   };
 
-  // data structure
   const data = {
     items: StorageCtrl.getItemsFromStorage(),
     currentItem: null,
@@ -130,7 +126,6 @@ const ItemCtrl = (function () {
   };
 })();
 
-// UI controller
 const UiCtrl = (function () {
   const UiSelectors = {
     itemList: "#item-list",
@@ -298,7 +293,6 @@ const UiCtrl = (function () {
   };
 })();
 
-// App controller
 const App = (function (ItemCtrl, StorageCtrl, UiCtrl) {
   const loadEventListeners = () => {
     const UiSelectors = UiCtrl.getSelectors();
