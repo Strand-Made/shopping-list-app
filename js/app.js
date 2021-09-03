@@ -122,6 +122,7 @@ const ItemCtrl = (function () {
     },
     clearAllItems: () => {
       data.items = [];
+      UiCtrl.populateItemList(data.items);
     },
   };
 })();
@@ -181,44 +182,67 @@ const UiCtrl = (function () {
       const notifyContainer = document.querySelector(
         UiSelectors.notifyContainer
       );
-      let notifyStyles = {
+      let notifyTextStyle = {
         textColor: "",
-        display: "flex",
-        position: "-translate-y-16",
         message: "",
       };
-      if (type === "success") {
-        notifyStyles.textColor = "text-yellow-600";
-        notifyStyles.message = "Item successfully added";
+      function fadeOutMessage(toReplace, replaceWith) {
+        setTimeout(
+          () => notifyContainer.classList.replace(toReplace, replaceWith),
+          3000
+        );
+      }
+      (function typeOfMessage(type) {
         notifyContainer.classList.replace("opacity-0", "opacity-100");
         notifyContainer.classList.add("translate-y-1");
-      }
-      if (type === "deleted") {
-        notifyStyles.textColor = "text-red-600";
-
-        notifyStyles.message = "Item successfully deleted";
-      }
-      if (type === "updated") {
-        notifyStyles.textColor = "text-yellow-600";
-        notifyStyles.message = "Item successfully updated";
-        notifyContainer.classList.toggle("opacity-100");
-      }
-      if ("removeMessage") {
+        fadeOutMessage("opacity-100", "opacity-0");
+        if (type === "success") {
+          notifyTextStyle.textColor = "text-yellow-600";
+          notifyTextStyle.message = "Item successfully added";
+        }
+        if (type === "deleted") {
+          notifyTextStyle.textColor = "text-red-600";
+          notifyTextStyle.message = "Item successfully deleted";
+        }
+        if (type === "updated") {
+          notifyTextStyle.textColor = "text-yellow-600";
+          notifyTextStyle.message = "Item successfully updated";
+        }
+      })(type);
+      // if (type === "success") {
+      //   notifyTextStyle.textColor = "text-yellow-600";
+      //   notifyTextStyle.message = "Item successfully added";
+      //   notifyContainer.classList.replace("opacity-0", "opacity-100");
+      //   notifyContainer.classList.add("translate-y-1");
+      //   fadeOutMessage("opacity-100", "opacity-0");
+      // }
+      // if (type === "deleted") {
+      //   notifyTextStyle.textColor = "text-red-600";
+      //   notifyTextStyle.message = "Item successfully deleted";
+      //   notifyContainer.classList.replace("opacity-0", "opacity-100");
+      //   notifyContainer.classList.add("translate-y-1");
+      //   fadeOutMessage("opacity-100", "opacity-0");
+      // }
+      // if (type === "updated") {
+      //   notifyTextStyle.textColor = "text-yellow-600";
+      //   notifyTextStyle.message = "Item successfully updated";
+      //   notifyContainer.classList.replace("opacity-0", "opacity-100");
+      //   notifyContainer.classList.add("translate-y-1");
+      //   fadeOutMessage("opacity-100", "opacity-0");
+      // }
+      if (removeMessage) {
         notifyContainer.classList.replace("opacity-100", "opacity-0");
-        notifyContainer.classList.toggle("translate-y-1");
       }
-
-      let style = `${notifyStyles.display} items-center absolute top-0 inset-x-0 max-w-md mt-4 rounded-md mx-auto justify-between bg-gray-200 px-3 
-      py-4 ${notifyStyles.opacity} `;
 
       notifyContainer.innerHTML = `
       <div
       role="dialog"
       aria-labelledby="dialogTitle"
-      class="${style}"
+      class="flex items-center absolute top-0 inset-x-0 max-w-md mt-4 rounded-md mx-auto justify-between bg-gray-200 px-3 
+      py-4"
     >
       <svg
-        class="w-7 h-7 stroke-current ${notifyStyles.textColor}"
+        class="w-7 h-7 stroke-current ${notifyTextStyle.textColor}"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -232,8 +256,8 @@ const UiCtrl = (function () {
         ></path>
       </svg>
 
-      <h3 class="${notifyStyles.textColor}" id="dialogTitle">
-        ${notifyStyles.message}
+      <h3 class="${notifyTextStyle.textColor}" id="dialogTitle">
+        ${notifyTextStyle.message}
       </h3>
       <button class="cursor-pointer clear-modal  p-2 z-10" aria-label="close dialog">
         <svg
@@ -424,7 +448,7 @@ const App = (function (ItemCtrl, StorageCtrl, UiCtrl) {
       const listIdArray = listId.split("-");
       const id = parseInt(listIdArray[1]);
       const itemToEdit = ItemCtrl.getItemById(id);
-      console.log(itemToEdit);
+
       ItemCtrl.setCurrentItem(itemToEdit);
 
       UiCtrl.addItemToForm();
@@ -436,7 +460,7 @@ const App = (function (ItemCtrl, StorageCtrl, UiCtrl) {
   const clearModalOnClick = (e) => {
     if (e.target.classList.contains("clear-modal")) {
       console.log("click");
-      UiCtrl.notifyUser("removeMessage");
+      UiCtrl.notifyUser(null, true);
     }
 
     e.preventDefault();
